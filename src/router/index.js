@@ -6,6 +6,7 @@ const Home = () => import('@/components/Home')
 const Contacts = () => import('@/components/Contacts')
 
 export default new Router({
+  mode: 'history', // prerender需要使用history模式
   routes: [
     {
       path: '/',

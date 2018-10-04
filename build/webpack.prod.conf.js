@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const PrerenderSPAPlugin = require('prerender-spa-plugin')
 
 const env = require('../config/prod.env')
 
@@ -119,7 +120,43 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+
+    new PrerenderSPAPlugin({
+      staticDir: config.build.assetsRoot,
+      routes: [ '/', '/Contacts' ], // 需要预渲染的路由
+      minify: {
+        collapseBooleanAttributes: true,
+        collapseWhitespace: true,
+        decodeEntities: true,
+        keepClosingSlash: true,
+        sortAttributes: true
+      },
+      postProcess (renderedRoute) {
+        // 如果做了路由懒加载（https://router.vuejs.org/zh/guide/advanced/lazy-loading.html）
+        // `prerender-spa-plugin`渲染静态页面时会将类似于
+        // <script src="/static/js/0.9231fc498af773fb2628.js" type="text/javascript" async charset="utf-8"></script>
+        // 这样的异步script标签添加到生成的html的head标签内
+        // 这会导致它先于app,vendor,manifest等js（位于body底部）执行（async只是不会阻塞后面的DOM解析，这并不意味这它最后执行）
+        // 此时就会出现“webpackJsonp is not defined”的报错
+        // 当app,vendor,manifest等js文件加载完毕后，又会在head标签重复插入这个异步的script标签
+        // 虽然这个报错不会对程序造成影响，但是最好的方式，还是不要把这些异步组件直接渲染到最终的html中
+        // 这个正则的作用就在于剔除html中生成的路由懒加载相关的异步script标签
+        // 除了这种解决方案，还有两种不推荐的解决方案
+        // 1. 不使用路由懒加载
+        // 2. 将HtmlWebpackPlugin的inject设置为'head'，这样app,vendor,manifest等js就会插入到head里，并在路由懒加载的异步script标签上面
+        // 但由于普通的script是同步的，在他们全部加载完毕之前，页面是无法渲染的，也就违背了prerender的初衷
+        // 而且你还需要对main.js作如下修改，以确保Vue在实例化的时候可以找到<div id="app"></div>并成功挂载
+        // const app = new Vue({
+        //   // ...
+        // })
+        // document.addEventListener('DOMContentLoaded', function () {
+        //   app.$mount('#app')
+        // })
+        renderedRoute.html = renderedRoute.html.replace(/<script.*src=".*[0-9]+\.[0-9a-z]*\.js"><\/script>/,'')
+        return renderedRoute
+      }
+    })
   ]
 })
 
