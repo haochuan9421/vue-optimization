@@ -48,10 +48,14 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths
+    // 将assetsPublicPath从'/'修改为'./'
+    // 是因为当你的项目不是部署在网站根目录下时，如http://www.example.com/my-app/，
+    // 你期望的请求地址是http://www.example.com/my-app/static/js/app.js
+    // 而实际的请求地址是http://www.example.com/static/js/app.js
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-
+    assetsPublicPath: './',
+    
     /**
      * Source Maps
      */
