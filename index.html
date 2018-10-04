@@ -4,9 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>vue-optimization</title>
+    <!-- 使用CDN加速的CSS文件，配置在config/index.js下 -->
+    <% for (var i in htmlWebpackPlugin.options.css) { %>
+    <link href="<%= htmlWebpackPlugin.options.css[i] %>" rel="stylesheet">
+    <% } %>
   </head>
   <body>
     <div id="app"></div>
+    <!-- 使用CDN加速的JS文件，配置在config/index.js下 -->
+    <% for (var i in htmlWebpackPlugin.options.js) { %>
+    <script src="<%= htmlWebpackPlugin.options.js[i] %>"></script>
+    <% } %>
     <!-- built files will be auto injected -->
   </body>
 </html>

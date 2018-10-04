@@ -76,5 +76,19 @@ module.exports = {
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report
+  },
+
+  // 直接通过link标签或script标签加载的CDN文件链接
+  cdn: {
+    css: [
+      "https://unpkg.com/element-ui/lib/theme-chalk/index.css",
+    ],
+    js: [
+      "https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js",
+      "https://cdn.jsdelivr.net/npm/vue-router@3.0.1/dist/vue-router.min.js",
+      "https://cdn.jsdelivr.net/npm/vuex@3.0.1/dist/vuex.min.js",
+      "https://unpkg.com/element-ui/lib/index.js",
+      "https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"
+    ]
   }
 }
