@@ -88,14 +88,5 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
-  },
-  // 在使用CDN引入外部文件的情况下，依然可以在项目中使用import语法，键名是import的npm包名，键值是该库暴露的全局变量
-  // https://webpack.js.org/configuration/externals/#src/components/Sidebar/Sidebar.jsx
-  externals: {
-    'vue': 'Vue',
-    'vue-router': 'VueRouter',
-    'vuex': 'Vuex',
-    'element-ui':'ELEMENT',
-    'axios':'axios'
   }
 }
