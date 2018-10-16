@@ -77,7 +77,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         chunksSortMode: 'dependency',
         favicon: path.resolve(__dirname, '../favicon.png')
       },
-      config.cdn
+      config.build.cdn
     )),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),
@@ -157,7 +157,16 @@ const webpackConfig = merge(baseWebpackConfig, {
         return renderedRoute
       }
     })
-  ]
+  ],
+  // 在使用CDN引入外部文件的情况下，依然可以在项目中使用import语法，键名是import的npm包名，键值是该库暴露的全局变量
+  // https://webpack.js.org/configuration/externals/#src/components/Sidebar/Sidebar.jsx
+  externals: {
+    'vue': 'Vue',
+    'vue-router': 'VueRouter',
+    'vuex': 'Vuex',
+    'element-ui':'ELEMENT',
+    'axios':'axios'
+  }
 })
 
 if (config.build.productionGzip) {

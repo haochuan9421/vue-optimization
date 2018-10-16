@@ -12,7 +12,12 @@
   },
   "dependencies": {
     "compression": "^1.7.3",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "axios": "^0.18.0",
+    "element-ui": "^2.4.8",
+    "vue": "^2.5.17",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
