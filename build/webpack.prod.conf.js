@@ -11,6 +11,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const PrerenderSPAPlugin = require('prerender-spa-plugin')
+const chalk = require('chalk')
 
 const env = require('../config/prod.env')
 
@@ -153,7 +154,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         // document.addEventListener('DOMContentLoaded', function () {
         //   app.$mount('#app')
         // })
-        renderedRoute.html = renderedRoute.html.replace(/<script.*src=".*[0-9]+\.[0-9a-z]*\.js"><\/script>/,'')
+        renderedRoute.html = renderedRoute.html.replace(/<script[^<]*src="[^<]*[0-9]+\.[0-9a-z]{20}\.js"><\/script>/g,function (target) {
+          console.log(chalk.bgRed('\n\n剔除的懒加载标签:'), chalk.magenta(target))
+          return ''
+        })
         return renderedRoute
       }
     })
