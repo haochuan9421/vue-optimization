@@ -54,7 +54,10 @@
 如果你的项目没有做[路由懒加载](https://router.vuejs.org/zh/guide/advanced/lazy-loading.html),那么你大可放心的按上面所说的去实践了。但如果你的项目里用了，你会发现有`webpackJsonp is not defined`的报错。这个因为`prerender-spa-plugin`渲染静态页面时，也会将类似于`<script src="/static/js/0.9231fc498af773fb2628.js" type="text/javascript" async charset="utf-8"></script>`这样的异步`script`标签添加到生成的`html`的`head`标签内。这会导致它先于`app.js`,`vendor.js`,`manifest.js`（位于`body`底部）执行。（`async`只是不会阻塞后面的`DOM`解析，这并不意味这它最后执行）。而且当这些`js`加载完毕后，又会在`head`标签重复创建这个异步的`script`标签。虽然这个报错不会对程序造成影响，但是最好的方式，还是不要把这些异步组件直接渲染到最终的`html`中。好在`prerender-spa-plugin`提供了`postProcess`选项，可以在真在生成`html`文件之前做一次处理，这里我使用一个简单的正则表达式，将这些异步的`script`标签剔除。本分支已经使用了**路由懒加载**，你可以直接查看`git`历史，比对文件和`base`分支的变化来对你的项目进行相应调整。
 ```js
   postProcess (renderedRoute) {
-    renderedRoute.html = renderedRoute.html.replace(/<script.*src=".*[0-9]+\.[0-9a-z]*\.js"><\/script>/,'')
+    renderedRoute.html = renderedRoute.html.replace(/<script[^<]*src="[^<]*[0-9]+\.[0-9a-z]{20}\.js"><\/script>/g,function (target) {
+      console.log(chalk.bgRed('\n\n剔除的懒加载标签:'), chalk.magenta(target))
+      return ''
+    })
     return renderedRoute
   }
 ```
